@@ -15,3 +15,5 @@ An opinionated, pluggable, and production-grade multi-tenant library built using
 
 Created by: [Rahul Bhatt](https://github.com/rahul-s-bhatt)  
 Inspired by: Disappointment of 0.5% Raise in 2025. Fueled by design.
+
+Also have ego-logs if you want to read those.
