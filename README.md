@@ -17,5 +17,3 @@ Created by: [Rahul Bhatt](https://github.com/rahul-s-bhatt)
 Inspired by: Disappointment of 0.5% Raise in 2025. Fueled by design.
 
 Also have ego-logs if you want to read those.
-
-![ChatGPT Image Jun 21, 2025, 11_06_05 PM](https://github.com/user-attachments/assets/384dd432-4930-44ac-ada8-88f1f543d6c7)
