@@ -6,4 +6,8 @@ Said just "okay" when he said the numbers and didn't even fight back.
 
 But I want to change, I want to score myself.
 
+Does your effort truly matter?
+Does your team work truly matter?
+Does your self sacrifice truly matter?
+
 isagi yoichi, thank you for teaching me about ego.

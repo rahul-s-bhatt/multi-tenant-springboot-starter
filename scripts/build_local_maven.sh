@@ -1,0 +1,1 @@
+Get-ChildItem "$env:USERPROFILE\.m2\repository\org\nirvikalpa\multitenancy-spring-boot-starter\0.1.0-SNAPSHOT"
