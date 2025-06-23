@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
  * Tenant metadata holder (e.g., DB URL, secrets).
  */
 public record TenantDefinition(
+        @NotBlank String baseDomain,
         @NotBlank String tenantId,
         @NotBlank String datasourceUrl,
         @NotBlank String username,

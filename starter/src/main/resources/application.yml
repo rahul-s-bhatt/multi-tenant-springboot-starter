@@ -8,6 +8,8 @@ spring:
         format_sql: true
 
 tenancy:
+  base-domain: "com.example"
+
   datasource:
     max-pool-size: 5
     min-idle: 1

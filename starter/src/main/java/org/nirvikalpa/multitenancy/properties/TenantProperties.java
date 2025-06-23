@@ -1,5 +1,6 @@
 package org.nirvikalpa.multitenancy.properties;
 
+import org.nirvikalpa.multitenancy.enums.TenantIsolationStrategy;
 import org.nirvikalpa.multitenancy.registry.TenantDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -8,17 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.validation.constraints.NotBlank;
-import org.nirvikalpa.multitenancy.registry.TenantDefinition;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ConfigurationProperties(prefix = "tenancy")
 @Validated
 public class TenantProperties {
-
+    private TenantIsolationStrategy strategy = TenantIsolationStrategy.DATABASE;
     /**
      * Static in-memory map of tenants loaded from YAML.
      */

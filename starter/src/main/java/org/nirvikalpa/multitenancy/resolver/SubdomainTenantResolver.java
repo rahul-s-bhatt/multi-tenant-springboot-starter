@@ -1,6 +1,8 @@
 package org.nirvikalpa.multitenancy.resolver;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.nirvikalpa.multitenancy.exception.HostNotFoundException;
+import org.nirvikalpa.multitenancy.exception.NoTenantFoundException;
 
 /**
  * Default implementation that extracts tenant ID from subdomain.
@@ -17,17 +19,20 @@ public class SubdomainTenantResolver implements TenantResolver {
     @Override
     public String resolveTenantId(HttpServletRequest request) {
         String host = request.getServerName();
+
         if (host == null || !host.endsWith(baseDomain)) {
-            return null;
+            throw new HostNotFoundException("Request host not found or invalid: " + host);
         }
 
         String[] segments = host.split("\\.");
-        int baseParts = baseDomain.split("\\.").length;
+        String[] baseParts = baseDomain.split("\\.");
 
-        if (segments.length <= baseParts) {
-            return null;
+        if (segments.length <= baseParts.length) {
+            throw new NoTenantFoundException("No subdomain found in host: " + host);
         }
 
-        return segments[0]; // first segment = subdomain
+        int tenantIndex = segments.length - baseParts.length - 1;
+        return segments[tenantIndex]; // Gets the subdomain before the base
     }
+
 }
