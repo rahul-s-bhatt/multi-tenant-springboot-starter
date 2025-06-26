@@ -3,7 +3,6 @@ git tag -d v0.1.0-SNAPSHOT
 git push origin --delete v0.1.0-SNAPSHOT
 
 To Create Tag
-git tag v0.1.0-SNAPSHOT
 git tag -a v0.1.0-SNAPSHOT -m "First Tag"
 git push origin v0.1.0-SNAPSHOT
 
