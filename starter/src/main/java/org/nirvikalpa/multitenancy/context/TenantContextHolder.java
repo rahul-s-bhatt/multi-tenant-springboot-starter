@@ -5,31 +5,18 @@ package org.nirvikalpa.multitenancy.context;
  * The context must be explicitly initialized externally by the framework or user.
  */
 public class TenantContextHolder {
-    private static TenantContext context;
 
-    public static String getTenant() {
-        ensureInitialized();
-        return context.getCurrentTenant();
+    private static final ThreadLocal<String> CURRENT_TENANT = new ThreadLocal<>();
+
+    public static void setTenantId(String tenantId) {
+        CURRENT_TENANT.set(tenantId);
     }
 
-    public static void setTenant(String tenantId) {
-        ensureInitialized();
-        context.setCurrentTenant(tenantId);
+    public static String getTenantId() {
+        return CURRENT_TENANT.get();
     }
 
     public static void clear() {
-        if (context != null) {
-            context.clear();
-        }
-    }
-
-    public static void setContext(TenantContext customContext) {
-        context = customContext;
-    }
-
-    private static void ensureInitialized() {
-        if (context == null) {
-            throw new IllegalStateException("TenantContext not initialized. Please set it using TenantContextHolder.setContext().");
-        }
+        CURRENT_TENANT.remove();
     }
 }
