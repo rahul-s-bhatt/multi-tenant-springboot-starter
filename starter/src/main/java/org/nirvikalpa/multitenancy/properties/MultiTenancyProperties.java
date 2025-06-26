@@ -1,84 +1,113 @@
 package org.nirvikalpa.multitenancy.properties;
 
-import lombok.Data;
-import org.nirvikalpa.multitenancy.enums.MultiTenantIsolationStrategyEnum;
-import org.nirvikalpa.multitenancy.enums.MultiTenantRegistryTypeEnum;
-import org.nirvikalpa.multitenancy.enums.MultiTenantResolutionStrategyEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-
-import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
 @ConfigurationProperties(prefix = "multi-tenancy")
-@Data
 public class MultiTenancyProperties {
 
-    private Registry registry = new Registry();
-    private Resolution resolution = new Resolution();
     private Isolation isolation = new Isolation();
-    private Microservice microservice = new Microservice();
+    private Registry registry = new Registry();
 
-    @Data
-    public static class Registry {
-        private MultiTenantRegistryTypeEnum type;
-        private Jdbc jdbc;
-        private Map<String, InMemoryTenant> inMemoryTenants = new HashMap<>();
-
-        @Data
-        public static class Jdbc {
-            private String url;
-            private String username;
-            private String password;
-            private String driverClassName;
-        }
-
-        @Data
-        public static class InMemoryTenant {
-            private String tenantId;
-            private String datasourceUrl;
-            private String username;
-            private String password;
-
-            public InMemoryTenant(String tenantId, String datasourceUrl, String username, String password) {
-                this.tenantId = tenantId;
-                this.datasourceUrl = datasourceUrl;
-                this.username = username;
-                this.password = password;
-            }
-        }
+    // Getter
+    public Isolation getIsolation() {
+        return isolation;
     }
 
-    @Data
-    public static class Resolution {
-        private MultiTenantResolutionStrategyEnum strategy;
-        private SubDomain subDomain;
-
-        @Data
-        public static class SubDomain {
-            private String baseDomain;
-        }
+    public Registry getRegistry() {
+        return registry;
     }
 
-    @Data
     public static class Isolation {
-        private MultiTenantIsolationStrategyEnum strategy;
-        private DatasourceTemplate datasourceTemplate;
+        private DatasourceTemplate datasourceTemplate = new DatasourceTemplate();
 
-        @Data
+        public DatasourceTemplate getDatasourceTemplate() {
+            return datasourceTemplate;
+        }
+
+        public void setDatasourceTemplate(DatasourceTemplate template) {
+            this.datasourceTemplate = template;
+        }
+
         public static class DatasourceTemplate {
             private String driverClassName;
             private Integer maxPoolSize;
             private Integer minIdle;
             private Long idleTimeout;
             private Long maxLifetime;
+
+            public String getDriverClassName() { return driverClassName; }
+            public void setDriverClassName(String driverClassName) { this.driverClassName = driverClassName; }
+
+            public Integer getMaxPoolSize() { return maxPoolSize; }
+            public void setMaxPoolSize(Integer maxPoolSize) { this.maxPoolSize = maxPoolSize; }
+
+            public Integer getMinIdle() { return minIdle; }
+            public void setMinIdle(Integer minIdle) { this.minIdle = minIdle; }
+
+            public Long getIdleTimeout() { return idleTimeout; }
+            public void setIdleTimeout(Long idleTimeout) { this.idleTimeout = idleTimeout; }
+
+            public Long getMaxLifetime() { return maxLifetime; }
+            public void setMaxLifetime(Long maxLifetime) { this.maxLifetime = maxLifetime; }
         }
     }
 
-    @Data
-    public static class Microservice {
-        private boolean enabled;
-        private String dbStrategy; // consider an enum too
+    public static class Registry {
+        private Jdbc jdbc;
+        private Map<String, InMemoryTenant> inMemoryTenants;
+
+        public Jdbc getJdbc() { return jdbc; }
+        public void setJdbc(Jdbc jdbc) { this.jdbc = jdbc; }
+
+        public Map<String, InMemoryTenant> getInMemoryTenants() { return inMemoryTenants; }
+        public void setInMemoryTenants(Map<String, InMemoryTenant> inMemoryTenants) {
+            this.inMemoryTenants = inMemoryTenants;
+        }
+
+        public static class Jdbc {
+            private String url;
+            private String username;
+            private String password;
+            private String driverClassName;
+
+            public String getUrl() { return url; }
+            public void setUrl(String url) { this.url = url; }
+
+            public String getUsername() { return username; }
+            public void setUsername(String username) { this.username = username; }
+
+            public String getPassword() { return password; }
+            public void setPassword(String password) { this.password = password; }
+
+            public String getDriverClassName() { return driverClassName; }
+            public void setDriverClassName(String driverClassName) { this.driverClassName = driverClassName; }
+        }
+
+        public static class InMemoryTenant {
+            private String tenantId;
+            private String datasourceUrl;
+            private String username;
+            private String password;
+
+            public InMemoryTenant(String tenantId, String datasourceUrl, String username, String password){
+                this.tenantId = tenantId;
+                this.datasourceUrl = datasourceUrl;
+                this.username = username;
+                this.password = password;
+            }
+
+            public String getTenantId() { return tenantId; }
+            public void setTenantId(String tenantId) { this.tenantId = tenantId; }
+
+            public String getDatasourceUrl() { return datasourceUrl; }
+            public void setDatasourceUrl(String datasourceUrl) { this.datasourceUrl = datasourceUrl; }
+
+            public String getUsername() { return username; }
+            public void setUsername(String username) { this.username = username; }
+
+            public String getPassword() { return password; }
+            public void setPassword(String password) { this.password = password; }
+        }
     }
 }

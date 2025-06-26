@@ -1,0 +1,28 @@
+We are gonna build dual data source switching (the one I build for my company, reason was one data source would be used for master tenant, other data source would for all the other tenants -- via abstract routing multi tenant datasource).
+
+do you understand this?
+
+The way it was achieved is that--there were two classes having 
+enable jpa repositories which has 3 parameters:
+- basePackages
+- entitymanagerfactoryref
+- transactionmanagerref
+
+3 methods to create 3 beans:
+- datasource bean 
+- entitymanagerfactory bean 
+- platform transaction manager bean
+
+how did I separate those two at entity & repository level?
+- entity scan, packages, persistence unit name.
+
+The one line which actually solved spring not picking the entities in other packages was:
+
+when creating entity manager ref:
+
+entityManagerFactoryBean.getJPAProperyMap().put(AvailableSettings.BEAN_CONATINER, new SpringConatiner(beanfactory))
+
+that line was found on stackoverflow after 2-3 weeks of just trying.
+
+
+Do you understand what I want, please come up with the structure...

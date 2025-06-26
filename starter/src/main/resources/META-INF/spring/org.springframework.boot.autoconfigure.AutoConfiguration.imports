@@ -1,3 +1,1 @@
-org.nirvikalpa.multitenancy.config.MultitenancyAutoConfiguration,
-org.nirvikalpa.multitenancy.config.TenantRegistryAutoConfig,
-org.nirvikalpa.multitenancy.config.TenantDataSourceAutoConfig
+org.nirvikalpa.multitenancy.config.MultitenancyAutoConfiguration
