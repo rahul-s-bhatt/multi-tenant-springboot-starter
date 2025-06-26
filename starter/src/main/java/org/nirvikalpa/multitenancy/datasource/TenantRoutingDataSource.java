@@ -10,6 +10,7 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TenantRoutingDataSource extends AbstractRoutingDataSource {
@@ -46,10 +47,10 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
         config.setUsername(tenant.username());
         config.setPassword(tenant.password());
         config.setDriverClassName(template.getDriverClassName());
-        config.setMaximumPoolSize(template.getMaxPoolSize());
-        config.setMinimumIdle(template.getMinIdle());
-        config.setIdleTimeout(template.getIdleTimeout());
-        config.setMaxLifetime(template.getMaxLifetime());
+        config.setMaximumPoolSize(Optional.ofNullable(template.getMaxPoolSize()).orElse(10));
+        config.setMinimumIdle(Optional.ofNullable(template.getMinIdle()).orElse(1));
+        config.setIdleTimeout(Optional.ofNullable(template.getIdleTimeout()).orElse(300_000L));
+        config.setMaxLifetime(Optional.ofNullable(template.getMaxLifetime()).orElse(600_000L));
         return new HikariDataSource(config);
     }
 }

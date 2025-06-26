@@ -40,6 +40,13 @@ public class MultiTenancyProperties {
             private String datasourceUrl;
             private String username;
             private String password;
+
+            public InMemoryTenant(String tenantId, String datasourceUrl, String username, String password) {
+                this.tenantId = tenantId;
+                this.datasourceUrl = datasourceUrl;
+                this.username = username;
+                this.password = password;
+            }
         }
     }
 
