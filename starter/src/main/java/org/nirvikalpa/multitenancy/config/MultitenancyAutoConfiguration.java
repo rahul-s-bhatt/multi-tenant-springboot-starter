@@ -3,6 +3,7 @@ package org.nirvikalpa.multitenancy.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.nirvikalpa.multitenancy.context.TenantContextHolder;
+import org.nirvikalpa.multitenancy.datasource.DelayedTenantRoutingDataSource;
 import org.nirvikalpa.multitenancy.datasource.TenantRoutingDataSource;
 import org.nirvikalpa.multitenancy.properties.MultiTenancyProperties;
 import org.nirvikalpa.multitenancy.registry.InMemoryTenantRegistry;
@@ -50,9 +51,9 @@ public class MultitenancyAutoConfiguration {
     @Bean
     @Primary
     public DataSource tenantRoutingDataSource(MultiTenantRegistry tenantRegistry, MultiTenancyProperties props) {
-        TenantRoutingDataSource routingDataSource = new TenantRoutingDataSource(tenantRegistry, props);
-        routingDataSource.setTargetDataSources(new HashMap<>()); // required to init
-        routingDataSource.afterPropertiesSet();
-        return routingDataSource;
+        DelayedTenantRoutingDataSource ds = new DelayedTenantRoutingDataSource(TenantContextHolder::getTenantId);
+        ds.setTargetDataSources(new HashMap<>());
+        ds.afterPropertiesSet();
+        return ds;
     }
 }

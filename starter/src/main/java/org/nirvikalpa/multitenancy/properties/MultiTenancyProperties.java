@@ -28,13 +28,9 @@ public class MultiTenancyProperties {
     public static class Isolation {
         private DatasourceTemplate datasourceTemplate = new DatasourceTemplate();
 
-        public DatasourceTemplate getDatasourceTemplate() {
-            return datasourceTemplate;
-        }
+        public DatasourceTemplate getDatasourceTemplate() { return datasourceTemplate; }
 
-        public void setDatasourceTemplate(DatasourceTemplate template) {
-            this.datasourceTemplate = template;
-        }
+        public void setDatasourceTemplate(DatasourceTemplate template) { this.datasourceTemplate = template; }
 
         public static class DatasourceTemplate {
             private String driverClassName;
@@ -66,11 +62,8 @@ public class MultiTenancyProperties {
 
         public Jdbc getJdbc() { return jdbc; }
         public void setJdbc(Jdbc jdbc) { this.jdbc = jdbc; }
-
         public Map<String, InMemoryTenant> getInMemoryTenants() { return inMemoryTenants; }
-        public void setInMemoryTenants(Map<String, InMemoryTenant> inMemoryTenants) {
-            this.inMemoryTenants = inMemoryTenants;
-        }
+        public void setInMemoryTenants(Map<String, InMemoryTenant> inMemoryTenants) { this.inMemoryTenants = inMemoryTenants; }
 
         public static class Jdbc {
             private String url;
@@ -124,34 +117,20 @@ public class MultiTenancyProperties {
     public static class Resolution {
 
         private MultiTenantIdentifierResolverEnum multiTenantIdentifierResolverEnum = MultiTenantIdentifierResolverEnum.SUB_DOMAIN;
+        private String[] packagesToScan = new String[] { "com.nirvikalpa" }; // default
         private SubDomain subDomain = new SubDomain();
 
-        public MultiTenantIdentifierResolverEnum getMultiTenantIdentifierResolverEnum() {
-            return multiTenantIdentifierResolverEnum;
-        }
-
-        public void setTenantIdentifierResolver(MultiTenantIdentifierResolverEnum multiTenantIdentifierResolverEnum) {
-            this.multiTenantIdentifierResolverEnum = multiTenantIdentifierResolverEnum;
-        }
-
-        public SubDomain getSubDomain() {
-            return subDomain;
-        }
-
-        public void setSubDomain(SubDomain subDomain) {
-            this.subDomain = subDomain;
-        }
+        public String[] getPackagesToScan() { return packagesToScan; }
+        public void setPackagesToScan(String[] packagesToScan) { this.packagesToScan = packagesToScan; }
+        public MultiTenantIdentifierResolverEnum getMultiTenantIdentifierResolverEnum() {return multiTenantIdentifierResolverEnum; }
+        public void setTenantIdentifierResolver(MultiTenantIdentifierResolverEnum multiTenantIdentifierResolverEnum) {this.multiTenantIdentifierResolverEnum = multiTenantIdentifierResolverEnum; }
+        public SubDomain getSubDomain() {return subDomain; }
+        public void setSubDomain(SubDomain subDomain) { this.subDomain = subDomain; }
 
         public static class SubDomain {
             private String baseDomain;
-
-            public String getBaseDomain() {
-                return baseDomain;
-            }
-
-            public void setBaseDomain(String baseDomain) {
-                this.baseDomain = baseDomain;
-            }
+            public String getBaseDomain() { return baseDomain; }
+            public void setBaseDomain(String baseDomain) { this.baseDomain = baseDomain; }
         }
     }
 

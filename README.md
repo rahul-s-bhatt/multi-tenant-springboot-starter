@@ -68,6 +68,7 @@ dependencies {
 
 ```yaml
 multi-tenancy:
+  enabled: true
   registry:
     type: IN_MEMORY
     in-memory-tenants:
