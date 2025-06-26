@@ -1,34 +1,28 @@
-server:
-  port: 8080
-
-spring:
-  datasource:
-    url: jdbc:h2:mem:tenant_registry;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
 multi-tenancy:
   registry:
-    tenant-data-isolation-strategy: TENANT_PER_DATABASE
-    tenant-meta-data-registry: IN_MEMORY # or CENTRAL_DATABASE
+    type: IN_MEMORY
+    in-memory-tenants:
+      acme:
+        tenantId: acme
+        datasourceUrl: jdbc:h2:mem:acme
+        username: sa
+        password:
+      globex:
+        tenantId: globex
+        datasourceUrl: jdbc:h2:mem:globex
+        username: sa
+        password:
+
+  isolation:
+    type: TENANT_PER_DATABASE
+    datasource-template:
+      driver-class-name: org.h2.Driver
+      max-pool-size: 5
+      min-idle: 1
+      idle-timeout: 300000
+      max-lifetime: 600000
+
+  resolution:
     tenant-identifier-resolver: SUB_DOMAIN
-
-  common-datasource-properties:
-    driver-class-name: org.h2.Driver
-    max-pool-size: 5
-    min-idle: 1
-    idle-timeout: 300000
-    max-lifetime: 600000
-
-  in-memory-tenants:
-    acme:
-      tenantId: acme
-      datasourceUrl: jdbc:h2:mem:acme;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
-      username: sa
-      password:
-    globex:
-      tenantId: globex
-      datasourceUrl: jdbc:h2:mem:globex;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
-      username: sa
-      password:
+    sub-domain:
+      base-domain: localhost

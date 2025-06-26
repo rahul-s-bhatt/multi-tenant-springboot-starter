@@ -1,6 +1,8 @@
 package org.nirvikalpa.multitenancy.properties;
 
+import org.nirvikalpa.multitenancy.enums.MultiTenantIdentifierResolverEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "multi-tenancy")
@@ -8,6 +10,7 @@ public class MultiTenancyProperties {
 
     private Isolation isolation = new Isolation();
     private Registry registry = new Registry();
+    private Resolution resolution = new Resolution();
 
     // Getter
     public Isolation getIsolation() {
@@ -16,6 +19,10 @@ public class MultiTenancyProperties {
 
     public Registry getRegistry() {
         return registry;
+    }
+
+    public Resolution getResolution(){
+        return resolution;
     }
 
     public static class Isolation {
@@ -90,6 +97,8 @@ public class MultiTenancyProperties {
             private String username;
             private String password;
 
+            public InMemoryTenant() {}
+
             public InMemoryTenant(String tenantId, String datasourceUrl, String username, String password){
                 this.tenantId = tenantId;
                 this.datasourceUrl = datasourceUrl;
@@ -110,4 +119,40 @@ public class MultiTenancyProperties {
             public void setPassword(String password) { this.password = password; }
         }
     }
+
+
+    public static class Resolution {
+
+        private MultiTenantIdentifierResolverEnum multiTenantIdentifierResolverEnum = MultiTenantIdentifierResolverEnum.SUB_DOMAIN;
+        private SubDomain subDomain = new SubDomain();
+
+        public MultiTenantIdentifierResolverEnum getMultiTenantIdentifierResolverEnum() {
+            return multiTenantIdentifierResolverEnum;
+        }
+
+        public void setTenantIdentifierResolver(MultiTenantIdentifierResolverEnum multiTenantIdentifierResolverEnum) {
+            this.multiTenantIdentifierResolverEnum = multiTenantIdentifierResolverEnum;
+        }
+
+        public SubDomain getSubDomain() {
+            return subDomain;
+        }
+
+        public void setSubDomain(SubDomain subDomain) {
+            this.subDomain = subDomain;
+        }
+
+        public static class SubDomain {
+            private String baseDomain;
+
+            public String getBaseDomain() {
+                return baseDomain;
+            }
+
+            public void setBaseDomain(String baseDomain) {
+                this.baseDomain = baseDomain;
+            }
+        }
+    }
+
 }

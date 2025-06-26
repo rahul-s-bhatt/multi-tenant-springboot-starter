@@ -83,7 +83,7 @@ multi-tenancy:
         password:
 
   isolation:
-    tenant-data-isolation-strategy: TENANT_PER_DATABASE
+    type: TENANT_PER_DATABASE
     datasource-template:
       driver-class-name: org.h2.Driver
       max-pool-size: 5
