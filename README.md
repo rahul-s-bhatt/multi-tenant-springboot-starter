@@ -57,15 +57,31 @@ dependencies {
 
 ## 🧹 Usage
 
-### 1. Annotate your Spring Boot app
+### 1. Create your Spring Boot app
 
 ```java
-@EnableTenantIsolation(strategy = IsolationStrategy.TENANT_PER_DATABASE)
 @SpringBootApplication
 public class MyApp {}
 ```
 
-### 2. Define tenants in your `application.yml`
+### 2. 📦 Add It via JitPack
+📦 Add It via JitPack
+
+```Maven
+<dependency>
+  <groupId>com.github.rahul-s-bhatt</groupId>
+  <artifactId>multi-tenant-springboot-starter</artifactId>
+  <version>v0.1.0-SNAPSHOT</version>
+</dependency>
+```
+
+```Gradle
+dependencies {
+  implementation("com.github.rahul-s-bhatt:multi-tenant-springboot-starter:v0.1.0-SNAPSHOT")
+}
+```
+
+### 3. Use sample `application.yml`
 
 ```yaml
 debug: true
