@@ -65,9 +65,8 @@ public class MyApp {}
 ```
 
 ### 2. 📦 Add It via JitPack
-📦 Add It via JitPack
-
-```Maven
+Maven 
+```
 <dependency>
   <groupId>com.github.rahul-s-bhatt</groupId>
   <artifactId>multi-tenant-springboot-starter</artifactId>
@@ -75,7 +74,8 @@ public class MyApp {}
 </dependency>
 ```
 
-```Gradle
+Gradle
+```
 dependencies {
   implementation("com.github.rahul-s-bhatt:multi-tenant-springboot-starter:v0.1.0-SNAPSHOT")
 }
