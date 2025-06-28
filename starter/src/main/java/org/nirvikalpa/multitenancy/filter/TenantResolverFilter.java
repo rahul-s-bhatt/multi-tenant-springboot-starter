@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Component
 public class TenantResolverFilter extends OncePerRequestFilter {
 
     private final TenantIdentifierResolver tenantIdentifierResolver;

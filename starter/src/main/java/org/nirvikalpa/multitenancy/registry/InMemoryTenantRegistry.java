@@ -16,17 +16,17 @@ public class InMemoryTenantRegistry implements MultiTenantRegistry {
 
     private final Map<String, TenantDescriptor> tenantMap;
 
-    public InMemoryTenantRegistry(Map<String, MultiTenancyProperties.Registry.InMemoryTenant> inMemoryConfig) {
-        this.tenantMap = inMemoryConfig.entrySet().stream()
+    public InMemoryTenantRegistry(MultiTenancyProperties props) {
+        var inMemoryConfig = props.getRegistry().getInMemoryTenants();
+        this.tenantMap = inMemoryConfig.stream()
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey,
+                        MultiTenancyProperties.Registry.InMemoryTenant::getTenantId,
                         entry -> {
-                            MultiTenancyProperties.Registry.InMemoryTenant tenant = entry.getValue();
                             return new TenantDescriptor(
-                                    tenant.getTenantId(),
-                                    tenant.getDatasourceUrl(),
-                                    tenant.getUsername(),
-                                    tenant.getPassword(),
+                                    entry.getTenantId(),
+                                    entry.getDatasourceUrl(),
+                                    entry.getUsername(),
+                                    entry.getPassword(),
                                     null // schemaName is optional
                             );
                         }

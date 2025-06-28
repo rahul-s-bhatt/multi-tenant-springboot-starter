@@ -28,13 +28,13 @@ import java.util.HashMap;
  */
 @AutoConfiguration
 @EnableConfigurationProperties(MultiTenancyProperties.class)
-public class MultitenancyAutoConfiguration {
+public class MultiTenancyAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(name = "multi-tenancy.registry.type", havingValue = "IN_MEMORY")
     public MultiTenantRegistry inMemoryRegistry(MultiTenancyProperties props) {
-        return new InMemoryTenantRegistry(props.getRegistry().getInMemoryTenants());
+        return new InMemoryTenantRegistry(props);
     }
 
     @Bean

@@ -1,3 +1,5 @@
+debug: true
+
 management:
   endpoints:
     web:
@@ -11,13 +13,11 @@ multi-tenancy:
   registry:
     type: IN_MEMORY
     in-memory-tenants:
-      acme:
-        tenantId: acme
+      - tenantId: acme
         datasourceUrl: jdbc:h2:mem:acme
         username: sa
         password:
-      globex:
-        tenantId: globex
+      - tenantId: globex
         datasourceUrl: jdbc:h2:mem:globex
         username: sa
         password:
@@ -33,6 +33,6 @@ multi-tenancy:
 
   resolution:
     enabled: true
-    type: SUB_DOMAIN
+    type: HTTP_HEADER
     sub-domain:
       base-domain: localhost

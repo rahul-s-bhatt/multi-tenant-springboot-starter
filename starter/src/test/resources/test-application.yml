@@ -1,0 +1,8 @@
+multi-tenancy:
+  registry:
+    type: IN_MEMORY
+    in-memory-tenants:
+      - tenantId: acme
+        datasourceUrl: jdbc:h2:mem:acme
+        username: sa
+        password:

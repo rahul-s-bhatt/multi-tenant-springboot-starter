@@ -1,1 +1,3 @@
-org.nirvikalpa.multitenancy.config.MultitenancyAutoConfiguration
+org.nirvikalpa.multitenancy.config.MultiTenancyAutoConfiguration
+org.nirvikalpa.multitenancy.config.MultiTenancyResolutionValidatorConfig
+org.nirvikalpa.multitenancy.config.MultiTenantResolutionAutoConfiguration

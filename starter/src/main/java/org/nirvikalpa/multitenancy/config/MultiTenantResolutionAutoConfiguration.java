@@ -18,22 +18,28 @@ import org.springframework.context.annotation.Configuration;
 public class MultiTenantResolutionAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(TenantResolverFilter.class)
+    @ConditionalOnMissingBean(TenantIdentifierResolver.class)
     @ConditionalOnProperty(name = "multi-tenancy.resolution.type", havingValue = "DOMAIN")
     public TenantIdentifierResolver domainResolver(){
         return new DomainTenantIdentifierResolver();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(TenantIdentifierResolver.class)
     @ConditionalOnProperty(name = "multi-tenancy.resolution.type", havingValue = "HTTP_HEADER")
     public TenantIdentifierResolver httpHeaderResolver(){
         return new HttpHeaderTenantIdentifierResolver();
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public FilterRegistrationBean<TenantResolverFilter> tenantResolverFilterFilter(TenantIdentifierResolver tenantIdentifierResolver){
+        TenantResolverFilter filter = new TenantResolverFilter(tenantIdentifierResolver);
+        System.out.println("✅ Registering TenantResolverFilter");
+
         FilterRegistrationBean<TenantResolverFilter> bean = new FilterRegistrationBean<>();
-        bean.setFilter(new TenantResolverFilter(tenantIdentifierResolver));
-        bean.setOrder(1); // ensure running it before security
+        bean.setFilter(filter);
+        bean.setOrder(1); // before Spring Security
         return bean;
     }
 }

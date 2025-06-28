@@ -1,9 +1,8 @@
 package org.nirvikalpa.multitenancy.properties;
 
-import org.nirvikalpa.multitenancy.enums.MultiTenantIdentifierResolverEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.Map;
+import java.util.List;
 
 @ConfigurationProperties(prefix = "multi-tenancy")
 public class MultiTenancyProperties {
@@ -19,8 +18,11 @@ public class MultiTenancyProperties {
     public String getDefaultTenantId() {return defaultTenantId;}
     public void setDefaultTenantId(String defaultTenantId){this.defaultTenantId = defaultTenantId;}
     public Isolation getIsolation() {return isolation;}
+    public void settIsolation(Isolation isolation) {this.isolation = isolation;}
     public Registry getRegistry() {return registry;}
+    public void setRegistry(Registry registry) {this.registry = registry;}
     public Resolution getResolution(){return resolution;}
+    public void setResolution(Resolution resolution){this.resolution = resolution;}
 
     public static class Isolation {
         private String type;
@@ -58,14 +60,14 @@ public class MultiTenancyProperties {
     public static class Registry {
         private String type;
         private Jdbc jdbc;
-        private Map<String, InMemoryTenant> inMemoryTenants;
+        private List<InMemoryTenant> inMemoryTenants;
 
         public String getType(){return type;}
         public void setType(String type) {this.type =type;}
         public Jdbc getJdbc() { return jdbc; }
         public void setJdbc(Jdbc jdbc) { this.jdbc = jdbc; }
-        public Map<String, InMemoryTenant> getInMemoryTenants() { return inMemoryTenants; }
-        public void setInMemoryTenants(Map<String, InMemoryTenant> inMemoryTenants) { this.inMemoryTenants = inMemoryTenants; }
+        public List<InMemoryTenant> getInMemoryTenants() { return inMemoryTenants; }
+        public void setInMemoryTenants(List<InMemoryTenant> inMemoryTenants) { this.inMemoryTenants = inMemoryTenants; }
 
         public static class Jdbc {
             private String url;
@@ -85,7 +87,6 @@ public class MultiTenancyProperties {
             public String getDriverClassName() { return driverClassName; }
             public void setDriverClassName(String driverClassName) { this.driverClassName = driverClassName; }
         }
-
         public static class InMemoryTenant {
             private String tenantId;
             private String datasourceUrl;
