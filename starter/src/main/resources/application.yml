@@ -1,15 +1,12 @@
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: multitenancy-status
-#
+management:
+  endpoints:
+    web:
+      exposure:
+        include: multitenancy-status
+
 multi-tenancy:
+  actuator-enabled: true
   default-tenant-id: "acme"
-
-  diagnostics:
-    enabled: true
-
   registry:
     type: IN_MEMORY
     in-memory-tenants:

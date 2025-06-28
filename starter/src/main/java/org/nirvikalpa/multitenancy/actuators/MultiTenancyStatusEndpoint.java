@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Endpoint(id = "multitenancy-status")
-@ConditionalOnProperty(name = "multi-tenancy.diagnostics.enabled", havingValue = "true", matchIfMissing = false)
 @Component
 public class MultiTenancyStatusEndpoint {
 

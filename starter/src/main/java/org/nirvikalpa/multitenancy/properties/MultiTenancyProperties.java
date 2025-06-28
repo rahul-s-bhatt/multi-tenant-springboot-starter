@@ -7,23 +7,20 @@ import java.util.Map;
 
 @ConfigurationProperties(prefix = "multi-tenancy")
 public class MultiTenancyProperties {
+    private Boolean actuatorEnabled;
     private String defaultTenantId;
     private Isolation isolation = new Isolation();
     private Registry registry = new Registry();
     private Resolution resolution = new Resolution();
-    // Getter
-    public String getDefaultTenantId() {return defaultTenantId;}
 
+    // Getter
+    public Boolean getActuatorEnabled() {return actuatorEnabled;}
+    public void setActuatorEnabled(Boolean actuatorEnabled) { this.actuatorEnabled = actuatorEnabled;}
+    public String getDefaultTenantId() {return defaultTenantId;}
     public void setDefaultTenantId(String defaultTenantId){this.defaultTenantId = defaultTenantId;}
-    public Isolation getIsolation() {
-        return isolation;
-    }
-    public Registry getRegistry() {
-        return registry;
-    }
-    public Resolution getResolution(){
-        return resolution;
-    }
+    public Isolation getIsolation() {return isolation;}
+    public Registry getRegistry() {return registry;}
+    public Resolution getResolution(){return resolution;}
 
     public static class Isolation {
         private String type;

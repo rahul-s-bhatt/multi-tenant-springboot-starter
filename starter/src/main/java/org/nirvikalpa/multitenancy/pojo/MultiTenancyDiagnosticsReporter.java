@@ -20,6 +20,7 @@ public class MultiTenancyDiagnosticsReporter {
     private final String DefaultTenantIdKey = "Default Tenant Id";
     private final String ResolverTypeKey = "Resolver Type";
     private final String IsResolverEnabledKey = "Is Resolver Enabled";
+    private final String IsActuatorEnabledKey = "Is Actuator Enabled";
     private final String IsActuatorExposedKey = "Is Actuator Exposed";
     private final String ActuatorEndpointKey = "Actuator Endpoint";
 
@@ -29,6 +30,7 @@ public class MultiTenancyDiagnosticsReporter {
     }
 
     public MultiTenancyDiagnostics collect() {
+        Boolean actuatorEnabled = properties.getActuatorEnabled();
         String isolationType = properties.getIsolation().getType();
         String registryType = properties.getRegistry().getType();
         String defaultTenantId = properties.getDefaultTenantId();
@@ -38,7 +40,7 @@ public class MultiTenancyDiagnosticsReporter {
         String[] exposedEndpoints = env.getProperty("management.endpoints.web.exposure.include", String[].class, new String[0]);
         boolean actuatorExposed = Arrays.asList(exposedEndpoints).contains("multitenancy-status") || Arrays.asList(exposedEndpoints).contains("*");
 
-        return new MultiTenancyDiagnostics(isolationType, registryType, getResolverEnabled, resolverType, defaultTenantId, actuatorExposed);
+        return new MultiTenancyDiagnostics(isolationType, registryType, getResolverEnabled, resolverType, defaultTenantId, actuatorEnabled, actuatorExposed);
     }
 
     public void printToConsole() {
@@ -59,17 +61,23 @@ public class MultiTenancyDiagnosticsReporter {
             out.println("✔️  Resolver Type:    " + resolverType);
         }
 
-        if (!diagnostics.actuatorExposed()) {
-            out.println("\n💡 Actuator is not exposed, Tip: Expose it by adding:\n");
-            out.println("  management:");
-            out.println("    endpoints:");
-            out.println("      web:");
-            out.println("        exposure:");
-            out.println("          include: multitenancy-status");
+        if(!diagnostics.actuatorEnabled())
+        {
+            out.println("\n💡 Actuator is not enabled, Tip: Enabled it by adding:\n");
+            out.println("multi-tenancy:");
+            out.println(" actuator-enabled: true");
         } else {
-            out.println("🔗 Actuator:     /actuator/multitenancy-status");
+            if (!diagnostics.actuatorExposed()) {
+                out.println("\n💡 Actuator is not exposed, Tip: Expose it by adding:\n");
+                out.println("  management:");
+                out.println("    endpoints:");
+                out.println("      web:");
+                out.println("        exposure:");
+                out.println("          include: multitenancy-status");
+            } else {
+                out.println("🔗 Actuator:     /actuator/multitenancy-status");
+            }
         }
-
         out.println("────────────────────────────────────────────────────────────────────");
     }
 

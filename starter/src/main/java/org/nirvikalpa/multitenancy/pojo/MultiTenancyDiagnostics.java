@@ -6,5 +6,6 @@ public record MultiTenancyDiagnostics(
         boolean resolverEnabled,
         String resolverType,
         String defaultTenantId,
+        boolean actuatorEnabled,
         boolean actuatorExposed
 ) {}

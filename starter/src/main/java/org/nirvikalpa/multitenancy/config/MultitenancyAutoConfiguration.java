@@ -2,6 +2,7 @@ package org.nirvikalpa.multitenancy.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.nirvikalpa.multitenancy.actuators.MultiTenancyStatusEndpoint;
 import org.nirvikalpa.multitenancy.applicationlistener.MultiTenancyStartupListener;
 import org.nirvikalpa.multitenancy.datasource.TenantRoutingDataSource;
 import org.nirvikalpa.multitenancy.pojo.MultiTenancyDiagnosticsReporter;
@@ -70,4 +71,11 @@ public class MultitenancyAutoConfiguration {
     public ApplicationListener<ApplicationReadyEvent> diagnosticsConsoleStartupListener(MultiTenancyDiagnosticsReporter multiTenancyDiagnosticsReporter) {
         return new MultiTenancyStartupListener(multiTenancyDiagnosticsReporter);
     }
+
+    @Bean
+    @ConditionalOnProperty(name = "multi-tenancy.actuator-enabled", havingValue = "true", matchIfMissing = false)
+    public MultiTenancyStatusEndpoint multiTenancyStatusEndpoint(MultiTenancyDiagnosticsReporter multiTenancyDiagnosticsReporter){
+        return new MultiTenancyStatusEndpoint(multiTenancyDiagnosticsReporter);
+    }
+
 }
