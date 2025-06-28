@@ -1,84 +1,93 @@
-# Multi-Tenant Spring Boot Starter
+# 🚀 multi-tenant-springboot-starter
 
-> **Plug-and-play multitenancy support for Spring Boot apps using per-database isolation**
+**Version:** `v0.1.0-SNAPSHOT`
+**Status:** Developer Preview
+**Author:** [Rahul S. Bhatt](https://github.com/rahul-s-bhatt)
 
-![License](https://img.shields.io/badge/license-MIT-green)
-![Spring Boot](https://img.shields.io/badge/spring--boot-3.1+-blue)
-
----
-
-## 🚀 Overview
-
-This starter simplifies the creation of multitenant Spring Boot applications by providing:
-
-* ✅ Tenant-per-database isolation strategy
-* ✅ Registry support via in-memory YAML or a central JDBC source
-* ✅ Subdomain-based tenant resolution
-* ✅ Thread-safe tenant context propagation
-* ✅ Drop-in `DataSource` routing
-
-Built with extensibility in mind — ready for schema, row-level, or microservice-aware expansions.
+A plug-and-play Spring Boot starter for building **multi-tenant SaaS applications**, with support for **subdomain-based** tenant resolution, **tenant registry**, and **dynamic datasource isolation**.
 
 ---
 
-## 📦 Installation
+## 📆 Installation (via JitPack)
 
-### Using JitPack
+> Add this to your `pom.xml` or `build.gradle.kts` to include the starter in your project.
 
-1. Add the JitPack repository to your project:
+### Maven
 
-<details>
-<summary>Gradle</summary>
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependency>
+<groupId>com.github.rahul-s-bhatt</groupId>
+<artifactId>multi-tenant-springboot-starter</artifactId>
+<version>v0.1.0-SNAPSHOT</version>
+</dependency>
+```
+
+### Gradle
 
 ```kotlin
 repositories {
     maven { url = uri("https://jitpack.io") }
 }
-```
 
-</details>
-
-<details>
-<summary>Maven</summary>
-
-```xml
-<repositories>
-  <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-  </repository>
-</repositories>
-```
-
-</details>
-
-2. Add the dependency:
-
-```kotlin
 dependencies {
-    implementation("com.github.rahul-s-bhatt:multi-tenant-springboot-starter:0.1.0-SNAPSHOT")
+    implementation("com.github.rahul-s-bhatt:multi-tenant-springboot-starter:v0.1.0-SNAPSHOT")
 }
 ```
 
 ---
 
-## ⚙️ Quick Start
+## ✅ Features
 
-### `application.yml`
+* ✅ **Tenant isolation strategy**: per-database (others coming soon)
+* ✅ **Subdomain-based resolution**: `acme.localhost:8080`
+* ✅ **Tenant Registry**: auto-load tenant metadata at startup
+* ⚙️ **Annotation-based activation** via `@EnableTenantIsolation (coming soon)
+* 🧠 **Spring Boot auto-configuration** with zero boilerplate
+* 🛡️ Safe, thread-isolated `TenantContextHolder`
+* 🌱 Extendable: plug in header-based/JWT-based resolvers easily
+
+---
+
+## 🧹 Usage
+
+### 1. Annotate your Spring Boot app
+
+```java
+@EnableTenantIsolation(strategy = IsolationStrategy.TENANT_PER_DATABASE)
+@SpringBootApplication
+public class MyApp {}
+```
+
+### 2. Define tenants in your `application.yml`
 
 ```yaml
+debug: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: multitenancy-status
+
 multi-tenancy:
-  enabled: true
+  actuator-enabled: true
+
+  default-tenant-id: "acme"
   registry:
     type: IN_MEMORY
     in-memory-tenants:
-      acme:
-        tenantId: acme
+      - tenantId: acme
         datasourceUrl: jdbc:h2:mem:acme
         username: sa
         password:
-      globex:
-        tenantId: globex
+      - tenantId: globex
         datasourceUrl: jdbc:h2:mem:globex
         username: sa
         password:
@@ -94,86 +103,99 @@ multi-tenancy:
 
   resolution:
     enabled: true
-    tenant-identifier-resolver: SUB_DOMAIN
+    type: HTTP_HEADER
     sub-domain:
       base-domain: localhost
 ```
 
-### Example Request
+---
 
-* Visit `http://acme.localhost:8080/api/foo`
-* Tenant `acme` is resolved from subdomain
-* A dedicated H2 datasource is connected behind the scenes
+## 📆 Modules Overview
+
+| Module                | Description                                        |
+| --------------------- | -------------------------------------------------- |
+| `starter/`            | The Spring Boot auto-configured core library       |
+| `demo/`               | Sample Spring Boot app with in-memory tenant DBs   |
+| `scripts/`            | (Optional) Shell utilities, CI, or bootstrap files |
+| `ego-logs/`, `daily/` | Build artifacts, logs (for local dev only)         |
 
 ---
 
-## 🧩 Supported Strategies
+## 🧪 Demo Usage
 
-| Category   | Strategy              | Enum Value            |
-| ---------- | --------------------- | --------------------- |
-| Registry   | In-memory YAML        | `IN_MEMORY`           |
-|            | Central JDBC DB       | `JDBC`                |
-| Isolation  | Per-database          | `TENANT_PER_DATABASE` |
-| Resolution | Subdomain             | `SUB_DOMAIN`          |
-|            | HTTP header (planned) | `HTTP_HEADER`         |
-
----
-
-## 🧱 Architecture
-
-* `MultiTenantRegistry` – resolves tenant metadata
-* `TenantContextHolder` – thread-local tenant scope
-* `TenantRoutingDataSource` – lazy-creates datasource per tenant
-* `SubdomainTenantResolverFilter` – sets current tenant from request
-* `MultiTenancyProperties` – central config model for YAML
-
----
-
-## 🧪 Test Setup (if you want to test locally)
+Run the demo app locally:
 
 ```bash
-git clone https://github.com/rahul-s-bhatt/multi-tenant-springboot-starter.git
-cd multi-tenant-springboot-starter
-demo/gradlew bootRun
+cd demo
+./mvnw spring-boot:run
 ```
 
-Visit: `http://acme.localhost:8080` → should route to acme datasource
+Open different tenants in browser:
 
-> Tip: Use `/etc/hosts` to simulate subdomains locally:
->
-> ```
-> 127.0.0.1 acme.localhost globex.localhost
-> ```
+* `http://acme.localhost:8080`
+* `http://globex.localhost:8080`
 
----
-
-## 🔭 Roadmap
-
-* [x] In-memory + JDBC tenant registries
-* [x] Per-database isolation
-* [x] Subdomain-based tenant resolution
-* [ ] Header-based resolution strategy
-* [ ] Schema and row-level isolation
-* [ ] Runtime tenant registration API
-* [ ] Liquibase / Flyway integration per tenant
-* [ ] Micronaut & Quarkus compatibility
+> You might need to map these to `127.0.0.1` in your `/etc/hosts`.
 
 ---
 
-## 🤝 Contributing
+## 🧠 Roadmap
 
-1. Fork this repo
-2. Create a feature branch (`feat/isolation-schema`)
-3. Open a PR with context and use-case
+| Feature                              | Status        |
+| ------------------------------------ | ------------- |
+| Subdomain-based resolution           | ✅ Completed   |
+| Header-based resolution              | ✅ Completed |
+| JWT claim resolution                 | 🚧 Planned |
+| Tenant-per-schema strategy           | 🚧 Planned    |
+| Tenant onboarding at runtime         | 🚧 Planned    |
+| Liquibase / Flyway integration       | 🚧 Planned    |
+| Spring Security multi-tenant support | 🚧 Planned    |
 
 ---
 
-## 📝 License
+## 🔧 Extending Resolvers
 
-Licensed under the [MIT License](https://opensource.org/licenses/MIT).
+You can plug in your custom resolver by implementing:
+
+```java
+public interface TenantResolver {
+    Optional<String> resolveTenant(HttpServletRequest request);
+}
+```
 
 ---
 
-## 🧠 Credits
+## 🧑‍💼 Contributing
 
-Crafted with precision by [Rahul S. Bhatt](https://github.com/rahul-s-bhatt) – open source, always. ✨
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/foo`)
+3. Commit your changes with proper test coverage
+4. Open a PR and describe the change clearly
+
+---
+
+## 📄 License
+
+MIT License. See `LICENSE` file.
+
+---
+
+## 🔗 Useful Links
+
+* 🔗 GitHub: [multi-tenant-springboot-starter](https://github.com/rahul-s-bhatt/multi-tenant-springboot-starter)
+* 🔗 JitPack: [jitpack.io/#rahul-s-bhatt/multi-tenant-springboot-starter](https://jitpack.io/#rahul-s-bhatt/multi-tenant-springboot-starter)
+
+---
+
+## ✨ Speciality
+
+This repository was born from personal motivation and resilience:
+
+* 🔥 **EGO Logs**: Inspired by the anime *Blue Lock*, a folder named `ego-logs/` exists to track daily engineering discipline, breakthroughs, and failures — documenting the journey like a true striker!
+* 💸 **Fuel from Setback**: This starter was sparked right after a demotivating 0.5 LPA raise — a pushback that ignited the fire to create something developers could be proud to use and learn from.
+
+---
+
+## 🤭 Maintainer
+
+Made with ❤️ by [Rahul S. Bhatt](https://github.com/rahul-s-bhatt)
