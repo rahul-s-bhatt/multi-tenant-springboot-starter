@@ -93,6 +93,7 @@ multi-tenancy:
       max-lifetime: 600000
 
   resolution:
+    enabled: true
     tenant-identifier-resolver: SUB_DOMAIN
     sub-domain:
       base-domain: localhost

@@ -1,6 +1,8 @@
 package org.nirvikalpa.multitenancy.datasource;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.nirvikalpa.multitenancy.applicationlistener.ApplicationLifecycleTracker;
 import org.nirvikalpa.multitenancy.context.TenantContextHolder;
 import org.nirvikalpa.multitenancy.properties.MultiTenancyProperties;
 import org.nirvikalpa.multitenancy.registry.MultiTenantRegistry;
@@ -16,6 +18,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class TenantRoutingDataSourceTest {
+
+    @BeforeEach
+    void setup(){
+        ApplicationLifecycleTracker.markAsStarted();
+    }
 
     @Test
     void shouldCreateAndCacheDatasourcePerTenant() throws SQLException {

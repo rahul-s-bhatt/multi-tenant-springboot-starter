@@ -1,5 +1,15 @@
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: multitenancy-status
+#
 multi-tenancy:
-  enabled: true
+  default-tenant-id: "acme"
+
+  diagnostics:
+    enabled: true
+
   registry:
     type: IN_MEMORY
     in-memory-tenants:
@@ -24,6 +34,7 @@ multi-tenancy:
       max-lifetime: 600000
 
   resolution:
-    tenant-identifier-resolver: SUB_DOMAIN
+    enabled: true
+    type: SUB_DOMAIN
     sub-domain:
       base-domain: localhost

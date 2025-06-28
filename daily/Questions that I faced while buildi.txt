@@ -1,0 +1,4 @@
+Questions that I faced while building multi tenant springboot starter:
+	
+1. Have a fitler which sets the tenant context based on http or subdomain (user preference), 
+  creates a problem with @JPAAutoConfiguration from springboot jpa, and since

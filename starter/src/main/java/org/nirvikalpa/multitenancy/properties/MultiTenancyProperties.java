@@ -7,29 +7,31 @@ import java.util.Map;
 
 @ConfigurationProperties(prefix = "multi-tenancy")
 public class MultiTenancyProperties {
-
+    private String defaultTenantId;
     private Isolation isolation = new Isolation();
     private Registry registry = new Registry();
     private Resolution resolution = new Resolution();
-
     // Getter
+    public String getDefaultTenantId() {return defaultTenantId;}
+
+    public void setDefaultTenantId(String defaultTenantId){this.defaultTenantId = defaultTenantId;}
     public Isolation getIsolation() {
         return isolation;
     }
-
     public Registry getRegistry() {
         return registry;
     }
-
     public Resolution getResolution(){
         return resolution;
     }
 
     public static class Isolation {
+        private String type;
         private DatasourceTemplate datasourceTemplate = new DatasourceTemplate();
 
+        public String getType(){return type;}
+        public void setType(String type) {this.type =type;}
         public DatasourceTemplate getDatasourceTemplate() { return datasourceTemplate; }
-
         public void setDatasourceTemplate(DatasourceTemplate template) { this.datasourceTemplate = template; }
 
         public static class DatasourceTemplate {
@@ -57,9 +59,12 @@ public class MultiTenancyProperties {
     }
 
     public static class Registry {
+        private String type;
         private Jdbc jdbc;
         private Map<String, InMemoryTenant> inMemoryTenants;
 
+        public String getType(){return type;}
+        public void setType(String type) {this.type =type;}
         public Jdbc getJdbc() { return jdbc; }
         public void setJdbc(Jdbc jdbc) { this.jdbc = jdbc; }
         public Map<String, InMemoryTenant> getInMemoryTenants() { return inMemoryTenants; }
@@ -113,17 +118,15 @@ public class MultiTenancyProperties {
         }
     }
 
-
     public static class Resolution {
-
-        private MultiTenantIdentifierResolverEnum multiTenantIdentifierResolverEnum = MultiTenantIdentifierResolverEnum.SUB_DOMAIN;
-        private String[] packagesToScan = new String[] { "com.nirvikalpa" }; // default
+        private Boolean enabled;
+        private String type;
         private SubDomain subDomain = new SubDomain();
 
-        public String[] getPackagesToScan() { return packagesToScan; }
-        public void setPackagesToScan(String[] packagesToScan) { this.packagesToScan = packagesToScan; }
-        public MultiTenantIdentifierResolverEnum getMultiTenantIdentifierResolverEnum() {return multiTenantIdentifierResolverEnum; }
-        public void setTenantIdentifierResolver(MultiTenantIdentifierResolverEnum multiTenantIdentifierResolverEnum) {this.multiTenantIdentifierResolverEnum = multiTenantIdentifierResolverEnum; }
+        public Boolean getEnabled() {return enabled;}
+        public void setEnabled(Boolean enabled) {this.enabled = enabled;}
+        public String getType(){return type;}
+        public void setType(String type) {this.type =type;}
         public SubDomain getSubDomain() {return subDomain; }
         public void setSubDomain(SubDomain subDomain) { this.subDomain = subDomain; }
 
@@ -133,5 +136,4 @@ public class MultiTenancyProperties {
             public void setBaseDomain(String baseDomain) { this.baseDomain = baseDomain; }
         }
     }
-
 }

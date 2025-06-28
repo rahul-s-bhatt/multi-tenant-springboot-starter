@@ -2,7 +2,9 @@ package org.nirvikalpa.multitenancy.datasource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.nirvikalpa.multitenancy.applicationlistener.ApplicationLifecycleTracker;
 import org.nirvikalpa.multitenancy.context.TenantContextHolder;
+import org.nirvikalpa.multitenancy.exceptions.MissingTenantException;
 import org.nirvikalpa.multitenancy.properties.MultiTenancyProperties;
 import org.nirvikalpa.multitenancy.registry.MultiTenantRegistry;
 import org.nirvikalpa.multitenancy.registry.TenantDescriptor;
@@ -15,13 +17,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TenantRoutingDataSource extends AbstractRoutingDataSource {
 
-    private final MultiTenantRegistry tenantRegistry;
+    private final MultiTenantRegistry multiTenantRegistry;
     private final Map<String, DataSource> resolvedDataSources = new ConcurrentHashMap<>();
     private final MultiTenancyProperties.Isolation.DatasourceTemplate template;
+    private final String defaultTenantId;
 
-    public TenantRoutingDataSource(MultiTenantRegistry tenantRegistry, MultiTenancyProperties props) {
-        this.tenantRegistry = tenantRegistry;
+    public TenantRoutingDataSource(MultiTenantRegistry multiTenantRegistry, MultiTenancyProperties props) {
+        this.multiTenantRegistry = multiTenantRegistry;
         this.template = props.getIsolation().getDatasourceTemplate();
+        this.defaultTenantId = props.getDefaultTenantId();
     }
 
     @Override
@@ -32,11 +36,13 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
     @Override
     protected DataSource determineTargetDataSource() {
         String tenantId = TenantContextHolder.getTenantId();
-        if (tenantId == null) throw new IllegalStateException("No tenant ID set in context");
+
+        if(!ApplicationLifecycleTracker.isApplicationStarted()) return resolveDefaultDataSource();
+        if (tenantId == null) throw new MissingTenantException("No tenant ID set in context");
 
         return resolvedDataSources.computeIfAbsent(tenantId, id -> {
-            TenantDescriptor tenant = tenantRegistry.findByTenantId(id)
-                    .orElseThrow(() -> new IllegalStateException("Tenant not found: " + id));
+            TenantDescriptor tenant = multiTenantRegistry.findByTenantId(id)
+                    .orElseThrow(() -> new MissingTenantException("Tenant not found: " + id));
             return createDataSource(tenant);
         });
     }
@@ -52,5 +58,16 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
         config.setIdleTimeout(Optional.ofNullable(template.getIdleTimeout()).orElse(300_000L));
         config.setMaxLifetime(Optional.ofNullable(template.getMaxLifetime()).orElse(600_000L));
         return new HikariDataSource(config);
+    }
+
+    private DataSource resolveDefaultDataSource() {
+
+        if(defaultTenantId == null) throw new MissingTenantException("Default tenant id not found in application.yml");
+
+        return resolvedDataSources.computeIfAbsent(defaultTenantId, id -> {
+            TenantDescriptor tenant = multiTenantRegistry.findByTenantId(id)
+                    .orElseThrow(() -> new MissingTenantException("Default Tenant not found via registry: " + id));
+            return createDataSource(tenant);
+        });
     }
 }
