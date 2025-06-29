@@ -1,6 +1,9 @@
 package org.nirvikalpa.multitenancy.datasource;
 
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
+import org.nirvikalpa.multitenancy.exceptions.MissingTenantException;
+import org.nirvikalpa.multitenancy.properties.MultiTenancyProperties;
+import org.nirvikalpa.multitenancy.registry.MultiTenantRegistry;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -10,15 +13,28 @@ import java.sql.SQLException;
 @Component
 public class SchemaBasedMultiTenantConnectionProvider implements MultiTenantConnectionProvider<String> {
 
-    private final DataSource dataSource;
+    private final MultiTenantRegistry registry;
+    private final MultiTenancyProperties.Isolation.DatasourceTemplate template;
+    private final String defaultTenantId;
+    private final DataSource sharedDataSource;
 
-    public SchemaBasedMultiTenantConnectionProvider(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public SchemaBasedMultiTenantConnectionProvider(
+            MultiTenantRegistry registry,
+            MultiTenancyProperties properties
+    ) {
+        this.registry = registry;
+        this.template = properties.getIsolation().getDatasourceTemplate();
+        this.defaultTenantId = properties.getDefaultTenantId();
+
+        // All tenants share this DataSource (created once)
+        this.sharedDataSource = registry.findByTenantId(defaultTenantId)
+                .orElseThrow(() -> new MissingTenantException("No default tenant found"))
+                .buildDataSourceFromTemplate(template);
     }
 
     @Override
     public Connection getAnyConnection() throws SQLException {
-        return dataSource.getConnection();
+        return sharedDataSource.getConnection();
     }
 
     @Override
@@ -28,14 +44,24 @@ public class SchemaBasedMultiTenantConnectionProvider implements MultiTenantConn
 
     @Override
     public Connection getConnection(String tenantIdentifier) throws SQLException {
-        Connection connection = getAnyConnection();
-        connection.createStatement().execute("SET SCHEMA '" + tenantIdentifier + "'");
+        Connection connection = sharedDataSource.getConnection();
+
+        // Switch schema: DB-agnostic logic (basic support)
+        if (template.getDriverClassName().contains("postgresql")) {
+            connection.createStatement().execute("SET SCHEMA '" + tenantIdentifier + "'");
+        } else if (template.getDriverClassName().contains("oracle")) {
+            connection.createStatement().execute("ALTER SESSION SET CURRENT_SCHEMA = " + tenantIdentifier);
+        } else {
+            throw new UnsupportedOperationException("Schema switching not implemented for driver: " + template.getDriverClassName());
+        }
+
         return connection;
     }
 
     @Override
     public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
-        connection.createStatement().execute("SET SCHEMA 'public'");
+        // Reset to default schema if needed
+        connection.createStatement().execute("SET SCHEMA '" + defaultTenantId + "'");
         connection.close();
     }
 
@@ -45,9 +71,9 @@ public class SchemaBasedMultiTenantConnectionProvider implements MultiTenantConn
     }
 
     @Override
-    public boolean isUnwrappableAs(Class unwrapType) {
-        return MultiTenantConnectionProvider.class.equals(unwrapType) ||
-                SchemaBasedMultiTenantConnectionProvider.class.isAssignableFrom(unwrapType);
+    public boolean isUnwrappableAs(Class<?> unwrapType) {
+        return MultiTenantConnectionProvider.class.equals(unwrapType)
+                || SchemaBasedMultiTenantConnectionProvider.class.isAssignableFrom(unwrapType);
     }
 
     @Override
