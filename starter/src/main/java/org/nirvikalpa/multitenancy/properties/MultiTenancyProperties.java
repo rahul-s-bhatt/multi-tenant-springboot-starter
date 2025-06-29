@@ -1,5 +1,6 @@
 package org.nirvikalpa.multitenancy.properties;
 
+import org.nirvikalpa.multitenancy.enums.MultiTenantDataIsolationStrategyEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
@@ -25,11 +26,11 @@ public class MultiTenancyProperties {
     public void setResolution(Resolution resolution){this.resolution = resolution;}
 
     public static class Isolation {
-        private String type;
+        private MultiTenantDataIsolationStrategyEnum type;
         private DatasourceTemplate datasourceTemplate = new DatasourceTemplate();
 
-        public String getType(){return type;}
-        public void setType(String type) {this.type =type;}
+        public MultiTenantDataIsolationStrategyEnum getType(){return type;}
+        public void setType(MultiTenantDataIsolationStrategyEnum type) {this.type =type;}
         public DatasourceTemplate getDatasourceTemplate() { return datasourceTemplate; }
         public void setDatasourceTemplate(DatasourceTemplate template) { this.datasourceTemplate = template; }
 

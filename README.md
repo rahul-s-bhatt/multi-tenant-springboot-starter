@@ -109,7 +109,7 @@ multi-tenancy:
         password:
 
   isolation:
-    type: TENANT_PER_DATABASE
+    type: TENANT_PER_DATABASE # or TENANT_PER_SCHEMA
     datasource-template:
       driver-class-name: org.h2.Driver
       max-pool-size: 5
@@ -178,6 +178,11 @@ public interface TenantResolver {
     Optional<String> resolveTenant(HttpServletRequest request);
 }
 ```
+
+## Isolation Strategies
+
+- `TENANT_PER_DATABASE`: Each tenant has its own DataSource (fully isolated)
+- `TENANT_PER_SCHEMA`: Tenants share a DB but are isolated by schema
 
 ---
 

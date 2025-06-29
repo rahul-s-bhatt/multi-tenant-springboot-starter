@@ -2,17 +2,25 @@ package org.nirvikalpa.multitenancy.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
+import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.nirvikalpa.multitenancy.actuators.MultiTenancyStatusEndpoint;
 import org.nirvikalpa.multitenancy.applicationlistener.MultiTenancyStartupListener;
+import org.nirvikalpa.multitenancy.datasource.DatabaseBasedMultiTenantConnectionProvider;
+import org.nirvikalpa.multitenancy.datasource.SchemaBasedMultiTenantConnectionProvider;
 import org.nirvikalpa.multitenancy.datasource.TenantRoutingDataSource;
+import org.nirvikalpa.multitenancy.enums.MultiTenantDataIsolationStrategyEnum;
 import org.nirvikalpa.multitenancy.pojo.MultiTenancyDiagnosticsReporter;
 import org.nirvikalpa.multitenancy.properties.MultiTenancyProperties;
 import org.nirvikalpa.multitenancy.registry.InMemoryTenantRegistry;
 import org.nirvikalpa.multitenancy.registry.JdbcTenantRegistry;
 import org.nirvikalpa.multitenancy.registry.MultiTenantRegistry;
+import org.nirvikalpa.multitenancy.resolver.HibernateCurrentTenantIdentifierResolver;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationListener;
@@ -78,4 +86,36 @@ public class MultiTenancyAutoConfiguration {
         return new MultiTenancyStatusEndpoint(multiTenancyDiagnosticsReporter);
     }
 
+    @Bean
+    public HibernatePropertiesCustomizer hibernateCustomizer(MultiTenancyProperties props) {
+        return hibernateProps -> {
+            hibernateProps.put("hibernate.multi_tenant", mapType(props.getIsolation().getType()));
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public CurrentTenantIdentifierResolver<String> tenantIdentifierResolver() {
+        return new HibernateCurrentTenantIdentifierResolver();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MultiTenantConnectionProvider<String> multiTenantConnectionProvider(
+            MultiTenantRegistry registry,
+            MultiTenancyProperties properties,
+            DataSource source
+    ) {
+        return switch (properties.getIsolation().getType()) {
+            case TENANT_PER_DATABASE -> new DatabaseBasedMultiTenantConnectionProvider(registry, properties);
+            case TENANT_PER_SCHEMA -> new SchemaBasedMultiTenantConnectionProvider(source);
+        };
+    }
+
+    private String mapType(MultiTenantDataIsolationStrategyEnum type) {
+        return switch (type) {
+            case TENANT_PER_DATABASE -> "DATABASE";
+            case TENANT_PER_SCHEMA -> "SCHEMA";
+        };
+    }
 }

@@ -25,14 +25,13 @@ public class TenantResolverFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String tenantId = tenantIdentifierResolver.resolveTenantId(request);
         TenantContextHolder.setTenantId(tenantId);
-
+        filterChain.doFilter(request, response);
         try {
             filterChain.doFilter(request, response);
         } finally {
-            TenantContextHolder.clear();
+            TenantContextHolder.clear(); // prevent thread leak
         }
     }
 
