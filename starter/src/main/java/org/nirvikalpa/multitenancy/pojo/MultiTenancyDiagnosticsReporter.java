@@ -31,7 +31,7 @@ public class MultiTenancyDiagnosticsReporter {
 
     public MultiTenancyDiagnostics collect() {
         Boolean actuatorEnabled = properties.getActuatorEnabled();
-        String isolationType = properties.getIsolation().getType();
+        String isolationType = properties.getIsolation().getType().toString();
         String registryType = properties.getRegistry().getType();
         String defaultTenantId = properties.getDefaultTenantId();
         Boolean getResolverEnabled = properties.getResolution().getEnabled();

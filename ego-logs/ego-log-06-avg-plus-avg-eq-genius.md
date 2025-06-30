@@ -1,0 +1,2 @@
+I know I'm an average joe, but If I can combine my skill with some other average joe then I can take on the genius.
+This is why I chose to use Hibernate's multi tenancy features for database rather creating from scratch.

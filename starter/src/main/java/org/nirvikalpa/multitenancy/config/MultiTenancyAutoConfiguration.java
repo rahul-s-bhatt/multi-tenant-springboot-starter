@@ -108,7 +108,7 @@ public class MultiTenancyAutoConfiguration {
     ) {
         return switch (properties.getIsolation().getType()) {
             case TENANT_PER_DATABASE -> new DatabaseBasedMultiTenantConnectionProvider(registry, properties);
-            case TENANT_PER_SCHEMA -> new SchemaBasedMultiTenantConnectionProvider(source);
+            case TENANT_PER_SCHEMA -> new SchemaBasedMultiTenantConnectionProvider(registry, properties);
         };
     }
 
